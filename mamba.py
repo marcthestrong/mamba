@@ -15,9 +15,11 @@ COLOR = {
     "white": pygame.Color(255, 255, 255),
     "red": pygame.Color(255, 0, 0),
     "green": pygame.Color(0, 153, 0),
-    "blue": pygame.Color(0, 0, 255),
-    "sand": pygame.Color(194, 178, 128)
+    "orange": pygame.Color(255, 89, 0),
+    "grey": pygame.Color(185, 185, 185)
 }
+
+
 
 # Set the fonts
 FONTS = {
@@ -32,7 +34,7 @@ FONTS = {
 }
 
 # Set the starting speed
-mamba_speed = 20
+mamba_speed = 10
 
 def show_score(choice, color, font, size):
     # Make the font object
@@ -81,21 +83,21 @@ window = pygame.display.set_mode((WINDOW_SIZE["x"], WINDOW_SIZE["y"]))
 fps = pygame.time.Clock()
 
 # Set default position
-mamba_position = [WINDOW_SIZE["x"] / 2, WINDOW_SIZE["y"] / 2]
+mamba_position = [640, 360]
 
 # Set sqares for the snakes body
 mamba_body = [
     [640, 360],
-    [630, 360],
     [620, 360],
-    [610, 360],
-    [590, 360]
+    [600, 360],
+    [580, 360],
+    [560, 360]
 ]
 
 # Fruit position
 fruit_position = [
-    random.randrange(1, (WINDOW_SIZE["x"] // 10)) * 10,
-    random.randrange(1, (WINDOW_SIZE["y"] // 10)) * 10
+    random.randrange(1, (WINDOW_SIZE["x"] // 20)) * 20,
+    random.randrange(1, (WINDOW_SIZE["y"] // 20)) * 20
 ]
 
 fruit_spawn = True
@@ -135,13 +137,13 @@ while True:
 
     # Moving the snake
     if direction == 'UP':
-        mamba_position[1] -= 10
+        mamba_position[1] -= 20
     if direction == 'DOWN':
-        mamba_position[1] += 10
+        mamba_position[1] += 20
     if direction == 'LEFT':
-        mamba_position[0] -= 10
+        mamba_position[0] -= 20
     if direction == 'RIGHT':
-        mamba_position[0] += 10
+        mamba_position[0] += 20
 
     # Snake body growing mechanism
     # if fruits and snakes collide then scores will be
@@ -149,31 +151,30 @@ while True:
     mamba_body.insert(0, list(mamba_position))
     if mamba_position[0] == fruit_position[0] and mamba_position[1] == fruit_position[1]:
         score += 15
-        mamba_speed += 5
+        mamba_speed += 1
         fruit_spawn = False
     else:
         mamba_body.pop()
 
     if not fruit_spawn:
         fruit_position = [
-            random.randrange(1, (WINDOW_SIZE["x"] // 10)) * 10,
-            random.randrange(1, (WINDOW_SIZE["y"] // 10)) * 10
+            random.randrange(1, (WINDOW_SIZE["x"] // 20)) * 20,
+            random.randrange(1, (WINDOW_SIZE["y"] // 20)) * 20
         ]
 
     fruit_spawn = True
-    window.fill(COLOR["sand"])
+    window.fill(COLOR["grey"])
 
     for position in mamba_body:
-        mamba_square = pygame.Rect(position[0], position[1], 10, 10)
-        pygame.draw.rect(window, COLOR["black"], mamba_square)
+        pygame.draw.rect(window, COLOR["black"], pygame.Rect(position[0], position[1], 20, 20))
 
-    fruit_square = pygame.Rect(fruit_position[0], fruit_position[1], 10, 10)
-    pygame.draw.rect(window, COLOR["green"], fruit_square)
+    fruit_border = pygame.Rect(fruit_position[0], fruit_position[1], 20, 20)
+    pygame.draw.circle(window, COLOR["orange"], fruit_border.center, 10)
 
     # Game Over conditions
-    if mamba_position[0] < 0 or mamba_position[0] > WINDOW_SIZE["x"] - 10:
+    if mamba_position[0] < 0 or mamba_position[0] > WINDOW_SIZE["x"] - 20:
         game_over()
-    if mamba_position[1] < 0 or mamba_position[1] > WINDOW_SIZE["y"] - 10:
+    if mamba_position[1] < 0 or mamba_position[1] > WINDOW_SIZE["y"] - 20:
         game_over()
 
     # Touching the snake body
