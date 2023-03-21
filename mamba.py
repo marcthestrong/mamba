@@ -1,23 +1,19 @@
 from game import *
 from tkinter import *
 
+# Get the monitor resolution and set the game
+# window to 50% of the resolution
 root = Tk()
 x = ((root.winfo_screenwidth() / 2) * 0.50)
 y = root.winfo_screenheight() * 0.50
 
-# Initialize pygame
+# Initialize the game
 pygame.init()
 objGame = Game(x, y)
 
 # Initialize the window
 pygame.display.set_caption("Mamba")
 window = objGame.window
-
-BASE_PATH = Path(__file__).resolve().parent
-sound_chew_path = str(BASE_PATH) + "/sounds/chewing.wav"
-bite_sound = pygame.mixer.Sound(sound_chew_path)
-sound_smash_path = str(BASE_PATH) + "/sounds/smash.wav"
-smash_sound = pygame.mixer.Sound(sound_smash_path)
 
 # FPS (Frames per second controller)
 fps = pygame.time.Clock()
@@ -28,7 +24,7 @@ direction = objGame.direction
 # Main
 while True:
 
-    window.fill(objGame.COLOR["grey"])
+    window.fill(objGame.COLOR["black"])
 
     # Handle key events
     for event in pygame.event.get():
@@ -71,23 +67,25 @@ while True:
         objGame.SOUND_CHEW.play()
 
         # Add points to the score
-        objGame.set_score(15)
+        objGame.set_score()
 
         # Increase the speed of the snake
-        objGame.set_speed(1)
+        objGame.set_speed()
 
-        objGame.food_spawn = False
+        objGame.set_fruit_spawn(False)
     else:
         objGame.mamba_body.pop()
 
-    if not objGame.food_spawn:
+    if not objGame.get_fruit_spawn():
         objGame.food_position = [
             random.randrange(1, (objGame.WINDOW_SIZE["x"] // 40)) * 40,
             random.randrange(1, (objGame.WINDOW_SIZE["y"] // 40)) * 40
         ]
 
+    objGame.set_fruit_spawn(True)
+
     for segment in objGame.mamba_body:
-        pygame.draw.rect(window, objGame.COLOR["black"], pygame.Rect(segment[0], segment[1], 40, 40))
+        pygame.draw.rect(window, objGame.COLOR["grey"], pygame.Rect(segment[0], segment[1], 40, 40))
 
     food_border = pygame.Rect(objGame.food_position[0], objGame.food_position[1], 40, 40)
     pygame.draw.circle(window, objGame.COLOR["green"], food_border.center, 20)
@@ -107,7 +105,7 @@ while True:
             objGame.game_over()
 
     # Show the Score
-    objGame.score(1, objGame.COLOR["white"], objGame.FONTS["score"]["name"], objGame.FONTS["score"]["size"])
+    objGame.score(objGame.COLOR["white"], objGame.FONTS["score"]["name"], objGame.FONTS["score"]["size"])
 
     pygame.display.update()
 
