@@ -1,6 +1,7 @@
-from tkinter import *
+# Author: Marcus Armstrong
+# Based on code from: https://www.geeksforgeeks.org/snake-game-in-python-using-pygame-module/
+
 import pygame
-from pygame.locals import *
 import sys
 from pathlib import Path
 import random
