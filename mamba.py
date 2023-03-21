@@ -1,115 +1,34 @@
-import pygame
-import random
-import time
+from game import *
+from tkinter import *
 
-# Define the constants
-# Set the window size
-WINDOW_SIZE = {
-    "x": 1280,
-    "y": 720
-}
-
-# Set the colors
-COLOR = {
-    "black": pygame.Color(50, 50, 50),
-    "white": pygame.Color(255, 255, 255),
-    "red": pygame.Color(255, 0, 0),
-    "green": pygame.Color(0, 153, 0),
-    "orange": pygame.Color(255, 89, 0),
-    "grey": pygame.Color(185, 185, 185)
-}
-
-
-
-# Set the fonts
-FONTS = {
-    "score": {
-        "name": "times new roman",
-        "size": 36
-    },
-    "game_over": {
-        "name": "times new roman",
-        "size": 120
-    }
-}
-
-# Set the starting speed
-mamba_speed = 10
-
-def show_score(choice, color, font, size):
-    # Make the font object
-    score_font = pygame.font.SysFont(FONTS["score"]["name"], FONTS["score"]["size"])
-
-    # Make the display surface object
-    score_surface = score_font.render("Score: " + str(score), True, color)
-
-    # Make a rectangular surface object
-    score_rect = score_surface.get_rect()
-
-    # Display the text
-    window.blit(score_surface, score_rect)
-
-def game_over():
-    # Create font object
-    my_font = pygame.font.SysFont(FONTS["game_over"]["name"], FONTS["game_over"]["size"])
-
-    # Make text surface object
-    game_over_surface = my_font.render("Score : " + str(score), True, COLOR["red"])
-
-    # Make rectangular object for text surface object
-    game_over_rect = game_over_surface.get_rect()
-
-    # Setting position of the text
-    game_over_rect.midtop = (WINDOW_SIZE["x"] / 2, WINDOW_SIZE["y"] / 3)
-
-    # Draw the text on the screen
-    window.blit(game_over_surface, game_over_rect)
-    pygame.display.flip()
-
-    # Wait 2 secs to quit the program
-    time.sleep(2)
-
-    # Exit the program
-    quit()
+root = Tk()
+x = ((root.winfo_screenwidth() / 2) * 0.50)
+y = root.winfo_screenheight() * 0.50
 
 # Initialize pygame
 pygame.init()
+objGame = Game(x, y)
 
 # Initialize the window
 pygame.display.set_caption("Mamba")
-window = pygame.display.set_mode((WINDOW_SIZE["x"], WINDOW_SIZE["y"]))
+window = objGame.window
 
-# Frames per second controller
+BASE_PATH = Path(__file__).resolve().parent
+sound_chew_path = str(BASE_PATH) + "/sounds/chewing.wav"
+bite_sound = pygame.mixer.Sound(sound_chew_path)
+sound_smash_path = str(BASE_PATH) + "/sounds/smash.wav"
+smash_sound = pygame.mixer.Sound(sound_smash_path)
+
+# FPS (Frames per second controller)
 fps = pygame.time.Clock()
 
-# Set default position
-mamba_position = [640, 360]
-
-# Set sqares for the snakes body
-mamba_body = [
-    [640, 360],
-    [620, 360],
-    [600, 360],
-    [580, 360],
-    [560, 360]
-]
-
-# Fruit position
-fruit_position = [
-    random.randrange(1, (WINDOW_SIZE["x"] // 20)) * 20,
-    random.randrange(1, (WINDOW_SIZE["y"] // 20)) * 20
-]
-
-fruit_spawn = True
-
-# Set default movement direction to the right
-direction = "RIGHT"
-change_to = direction
-
-score = 0
+change_to = objGame.change_to
+direction = objGame.direction
 
 # Main
 while True:
+
+    window.fill(objGame.COLOR["grey"])
 
     # Handle key events
     for event in pygame.event.get():
@@ -137,54 +56,59 @@ while True:
 
     # Moving the snake
     if direction == 'UP':
-        mamba_position[1] -= 20
+        objGame.mamba_position[1] -= 40
     if direction == 'DOWN':
-        mamba_position[1] += 20
+        objGame.mamba_position[1] += 40
     if direction == 'LEFT':
-        mamba_position[0] -= 20
+        objGame.mamba_position[0] -= 40
     if direction == 'RIGHT':
-        mamba_position[0] += 20
+        objGame.mamba_position[0] += 40
 
-    # Snake body growing mechanism
-    # if fruits and snakes collide then scores will be
-    # incremented by 10
-    mamba_body.insert(0, list(mamba_position))
-    if mamba_position[0] == fruit_position[0] and mamba_position[1] == fruit_position[1]:
-        score += 15
-        mamba_speed += 1
-        fruit_spawn = False
+    objGame.mamba_body.insert(0, list(objGame.mamba_position))
+    if objGame.mamba_position[0] == objGame.food_position[0] and objGame.mamba_position[1] == objGame.food_position[1]:
+
+        # Play chewing sound
+        objGame.SOUND_CHEW.play()
+
+        # Add points to the score
+        objGame.set_score(15)
+
+        # Increase the speed of the snake
+        objGame.set_speed(1)
+
+        objGame.food_spawn = False
     else:
-        mamba_body.pop()
+        objGame.mamba_body.pop()
 
-    if not fruit_spawn:
-        fruit_position = [
-            random.randrange(1, (WINDOW_SIZE["x"] // 20)) * 20,
-            random.randrange(1, (WINDOW_SIZE["y"] // 20)) * 20
+    if not objGame.food_spawn:
+        objGame.food_position = [
+            random.randrange(1, (objGame.WINDOW_SIZE["x"] // 40)) * 40,
+            random.randrange(1, (objGame.WINDOW_SIZE["y"] // 40)) * 40
         ]
 
-    fruit_spawn = True
-    window.fill(COLOR["grey"])
+    for segment in objGame.mamba_body:
+        pygame.draw.rect(window, objGame.COLOR["black"], pygame.Rect(segment[0], segment[1], 40, 40))
 
-    for position in mamba_body:
-        pygame.draw.rect(window, COLOR["black"], pygame.Rect(position[0], position[1], 20, 20))
-
-    fruit_border = pygame.Rect(fruit_position[0], fruit_position[1], 20, 20)
-    pygame.draw.circle(window, COLOR["orange"], fruit_border.center, 10)
+    food_border = pygame.Rect(objGame.food_position[0], objGame.food_position[1], 40, 40)
+    pygame.draw.circle(window, objGame.COLOR["green"], food_border.center, 20)
 
     # Game Over conditions
-    if mamba_position[0] < 0 or mamba_position[0] > WINDOW_SIZE["x"] - 20:
-        game_over()
-    if mamba_position[1] < 0 or mamba_position[1] > WINDOW_SIZE["y"] - 20:
-        game_over()
+    if objGame.mamba_position[0] < 0 or objGame.mamba_position[0] > objGame.WINDOW_SIZE["x"] - 40:
+        objGame.SOUND_SMASH.play()
+        objGame.game_over()
+    if objGame.mamba_position[1] < 0 or objGame.mamba_position[1] > objGame.WINDOW_SIZE["y"] - 40:
+        objGame.SOUND_SMASH.play()
+        objGame.game_over()
 
     # Touching the snake body
-    for block in mamba_body[1:]:
-        if mamba_position[0] == block[0] and mamba_position[1] == block[1]:
-            game_over()
+    for segment in objGame.mamba_body[1:]:
+        if objGame.mamba_position[0] == segment[0] and objGame.mamba_position[1] == segment[1]:
+            objGame.SOUND_SMASH.play()
+            objGame.game_over()
 
     # Show the Score
-    show_score(1, COLOR["white"], FONTS["score"]["name"], FONTS["score"]["size"])
+    objGame.score(1, objGame.COLOR["white"], objGame.FONTS["score"]["name"], objGame.FONTS["score"]["size"])
 
     pygame.display.update()
 
-    fps.tick(mamba_speed)
+    fps.tick(objGame.get_speed())
