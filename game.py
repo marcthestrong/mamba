@@ -7,9 +7,10 @@ from pathlib import Path
 import random
 import time
 
-
 class Game:
     def __init__(self, x, y):
+        
+        # Set the instance variables
         self.x = x
         self.x = y
         self._speed = 10
@@ -24,11 +25,13 @@ class Game:
         self.SOUND_SMASH_PATH = str(self.BASE_PATH) + "/sounds/smash.wav"
         self.SOUND_SMASH = pygame.mixer.Sound(self.SOUND_SMASH_PATH)
 
+        # Store the window size
         self.WINDOW_SIZE = {
             "x": x,
             "y": y
         }
 
+        # Store the colors used in the game
         self.COLOR = {
             "black": pygame.Color(28, 28, 28),
             "white": pygame.Color(255, 255, 255),
@@ -39,6 +42,7 @@ class Game:
             "grey": pygame.Color(150, 150, 150)
         }
 
+        # Store the font and the font size
         self.FONTS = {
             "score": {
                 "name": "Roboto",
@@ -50,12 +54,13 @@ class Game:
             }
         }
 
+        # Initialize the pygame window
         self.window = pygame.display.set_mode((self.WINDOW_SIZE["x"], self.WINDOW_SIZE["y"]))
 
         # Set starting position
         self.mamba_position = [640, 360]
 
-        # Set squares for the snakes body
+        # Set squares for the snake's body
         self.mamba_body = [
             [640, 360],
             [600, 360],
@@ -70,25 +75,33 @@ class Game:
             random.randrange(1, (self.WINDOW_SIZE["y"] // self.BLOCK_SIZE)) * self.BLOCK_SIZE
         ]
 
-    def set_score(self):
-        self._score += 15
-
+    # Get the current score
     def get_score(self):
         return self._score
 
-    def set_speed(self):
-        self._speed += 1
-
+    # Get the current speed
     def get_speed(self):
         return self._speed
 
-    def set_fruit_spawn(self, food_spawn):
-        self._food_spawn = food_spawn
-
+    # Get the boolean
     def get_fruit_spawn(self):
         return self._food_spawn
 
-    def score(self, color, font, size):
+    # Increment the score by 15
+    def set_score(self):
+        self._score += 15
+
+    # Increment the speed by 1
+    def set_speed(self):
+        self._speed += 1
+    
+    # Set the boolean
+    def set_fruit_spawn(self, food_spawn):
+        self._food_spawn = food_spawn
+
+
+    # Show the score
+    def show_score(self, color, font, size):
         # Make the font object
         score_font = pygame.font.SysFont(self.FONTS["score"]["name"], self.FONTS["score"]["size"], bold=True)
 

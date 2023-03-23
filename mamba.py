@@ -63,7 +63,10 @@ while True:
     if direction == 'RIGHT':
         objGame.mamba_position[0] += 40
 
+    # Set the snake at the starting position  
     objGame.mamba_body.insert(0, list(objGame.mamba_position))
+
+    # Conditional statement when the snake eats the food
     if objGame.mamba_position[0] == objGame.food_position[0] and objGame.mamba_position[1] == objGame.food_position[1]:
 
         # Play chewing sound
@@ -75,22 +78,29 @@ while True:
         # Increase the speed of the snake
         objGame.set_speed()
 
-        objGame.set_fruit_spawn(False)
+        # Set the food 
+        objGame.set_food_spawn(False)
     else:
         objGame.mamba_body.pop()
 
-    if not objGame.get_fruit_spawn():
+    # Place the food at a random spot within the window 
+    if not objGame.get_food_spawn():
         objGame.food_position = [
             random.randrange(1, (objGame.WINDOW_SIZE["x"] // 40)) * 40,
             random.randrange(1, (objGame.WINDOW_SIZE["y"] // 40)) * 40
         ]
 
-    objGame.set_fruit_spawn(True)
+    # Set the boolean true
+    objGame.set_food_spawn(True)
 
+    # Set a border around the snake
     for segment in objGame.mamba_body:
         pygame.draw.rect(window, objGame.COLOR["grey"], pygame.Rect(segment[0], segment[1], 40, 40))
 
+    # Set a border around the snake
     food_border = pygame.Rect(objGame.food_position[0], objGame.food_position[1], 40, 40)
+
+    # Draw the food in the window
     pygame.draw.circle(window, objGame.COLOR["green"], food_border.center, 20)
 
     # Game Over conditions
@@ -110,6 +120,8 @@ while True:
     # Show the Score
     objGame.score(objGame.COLOR["white"], objGame.FONTS["score"]["name"], objGame.FONTS["score"]["size"])
 
+    # Update the window
     pygame.display.update()
 
+    # Update the frames inside the window
     fps.tick(objGame.get_speed())
