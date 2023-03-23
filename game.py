@@ -7,15 +7,17 @@ from pathlib import Path
 import random
 import time
 
+
 class Game:
     def __init__(self, x, y):
-        
+
         # Set the instance variables
         self.x = x
         self.x = y
         self._speed = 10
         self._score = 0
         self._food_spawn = True
+        self._food_color = "green"
         self.BLOCK_SIZE = 40
         self.direction = "RIGHT"
         self.change_to = self.direction
@@ -35,11 +37,13 @@ class Game:
         self.COLOR = {
             "black": pygame.Color(28, 28, 28),
             "white": pygame.Color(255, 255, 255),
+            "grey": pygame.Color(150, 150, 150),
             "red": pygame.Color(255, 0, 0),
             "green": pygame.Color(0, 153, 0),
+            "blue": pygame.Color(17, 0, 255),
             "purple": pygame.Color(150, 0, 255),
-            "orange": pygame.Color(255, 89, 0),
-            "grey": pygame.Color(150, 150, 150)
+            "orange": pygame.Color(255, 128, 0),
+            "yellow": pygame.Color(255, 255, 0)
         }
 
         # Store the font and the font size
@@ -84,21 +88,40 @@ class Game:
         return self._speed
 
     # Get the boolean
-    def get_fruit_spawn(self):
+    def get_food_spawn(self):
         return self._food_spawn
 
-    # Increment the score by 15
+    # Increment the score based
+    # on the color of food
     def set_score(self):
-        self._score += 15
+        if self.get_food_color() == "red":
+            self._score += 10
+        elif self.get_food_color() == "blue":
+            self._score += 15
+        elif self.get_food_color() == "purple":
+            self._score += 20
+        elif self.get_food_color() == "orange":
+            self._score += 25
+        elif self.get_food_color() == "yellow":
+            self._score += 35
+        else:
+            self._score += 5
 
     # Increment the speed by 1
     def set_speed(self):
         self._speed += 1
-    
+
     # Set the boolean
-    def set_fruit_spawn(self, food_spawn):
+    def set_food_spawn(self, food_spawn):
         self._food_spawn = food_spawn
 
+    # Get the food color
+    def set_food_color(self, random_color):
+        self._food_color = random_color
+
+    # Set the food color
+    def get_food_color(self):
+        return self._food_color
 
     # Show the score
     def show_score(self, color, font, size):

@@ -1,8 +1,10 @@
 # Author: Marcus Armstrong
 # Based on code from: https://www.geeksforgeeks.org/snake-game-in-python-using-pygame-module/
+# Driver file
 
 from game import *
 from tkinter import *
+import random
 
 # Get the monitor resolution and set the game
 # window to 50% of the resolution
@@ -63,7 +65,7 @@ while True:
     if direction == 'RIGHT':
         objGame.mamba_position[0] += 40
 
-    # Set the snake at the starting position  
+    # Set the snake at the starting position
     objGame.mamba_body.insert(0, list(objGame.mamba_position))
 
     # Conditional statement when the snake eats the food
@@ -78,13 +80,21 @@ while True:
         # Increase the speed of the snake
         objGame.set_speed()
 
-        # Set the food 
+        # Set the food
         objGame.set_food_spawn(False)
     else:
         objGame.mamba_body.pop()
 
-    # Place the food at a random spot within the window 
+    # Place the food at a random spot within the window
     if not objGame.get_food_spawn():
+
+        # Set a random food color
+        food_color = list(objGame.COLOR.keys())
+        random_index = random.randint(3, len(food_color) - 1)
+        random_color = f"{food_color[random_index]}"
+        objGame.set_food_color(random_color)
+
+        # Set the food at a random X-Y coordinates
         objGame.food_position = [
             random.randrange(1, (objGame.WINDOW_SIZE["x"] // 40)) * 40,
             random.randrange(1, (objGame.WINDOW_SIZE["y"] // 40)) * 40
@@ -96,12 +106,12 @@ while True:
     # Set a border around the snake
     for segment in objGame.mamba_body:
         pygame.draw.rect(window, objGame.COLOR["grey"], pygame.Rect(segment[0], segment[1], 40, 40))
-
-    # Set a border around the snake
+    
+    # Set a border around the food
     food_border = pygame.Rect(objGame.food_position[0], objGame.food_position[1], 40, 40)
 
     # Draw the food in the window
-    pygame.draw.circle(window, objGame.COLOR["green"], food_border.center, 20)
+    pygame.draw.circle(window, objGame.COLOR[objGame.get_food_color()], food_border.center, 20)
 
     # Game Over conditions
     if objGame.mamba_position[0] < 0 or objGame.mamba_position[0] > objGame.WINDOW_SIZE["x"] - 40:
@@ -118,7 +128,7 @@ while True:
             objGame.game_over()
 
     # Show the Score
-    objGame.score(objGame.COLOR["white"], objGame.FONTS["score"]["name"], objGame.FONTS["score"]["size"])
+    objGame.show_score(objGame.COLOR["white"], objGame.FONTS["score"]["name"], objGame.FONTS["score"]["size"])
 
     # Update the window
     pygame.display.update()
