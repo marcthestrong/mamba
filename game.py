@@ -12,26 +12,37 @@ class Game:
     def __init__(self, x, y):
 
         # Set the instance variables
+        self.last_time = time.time()
         self.x = x
-        self.x = y
+        self.y = y
         self._speed = 10
         self._score = 0
         self._food_spawn = True
         self._food_color = "green"
-        self.BLOCK_SIZE = 40
         self.direction = "RIGHT"
         self.change_to = self.direction
+
+        # Set the file paths
         self.BASE_PATH = Path(__file__).resolve().parent
-        self.SOUND_CHEW_PATH = str(self.BASE_PATH) + "/sounds/chewing.wav"
-        self.SOUND_CHEW = pygame.mixer.Sound(self.SOUND_CHEW_PATH)
-        self.SOUND_SMASH_PATH = str(self.BASE_PATH) + "/sounds/smash.wav"
-        self.SOUND_SMASH = pygame.mixer.Sound(self.SOUND_SMASH_PATH)
+        self.SOUNDS_PATH = str(self.BASE_PATH) + "/assets/sounds/"
+        self.GFX_PATH = str(self.BASE_PATH) + "/assets/graphics/"
+
+        # Load the sound fx
+        self.SOUND_CHEW = pygame.mixer.Sound(self.SOUNDS_PATH + "chewing.wav")
+        self.SOUND_SMASH = pygame.mixer.Sound(self.SOUNDS_PATH + "smash.wav")
+        self.BACKGROUND_IMG = pygame.image.load(str(self.GFX_PATH) + "background.png")
 
         # Store the window size
         self.WINDOW_SIZE = {
             "x": x,
             "y": y
         }
+
+        # Set  position
+        self.food_position = [
+            random.randrange(1, (self.WINDOW_SIZE["x"] // 40)) * 40,
+            random.randrange(1, (self.WINDOW_SIZE["y"] // 40)) * 40
+        ]
 
         # Store the colors used in the game
         self.COLOR = {
@@ -62,22 +73,25 @@ class Game:
         self.window = pygame.display.set_mode((self.WINDOW_SIZE["x"], self.WINDOW_SIZE["y"]))
 
         # Set starting position
-        self.mamba_position = [640, 360]
+        self.mamba_position = [self.x / 2, self.y / 2]
 
         # Set squares for the snake's body
         self.mamba_body = [
-            [640, 360],
-            [600, 360],
-            [540, 360],
-            [500, 360],
-            [460, 360]
+            [self.x / 2, self.y / 2],
+            [(self.x / 2) - 40, self.y / 2]
         ]
 
-        # Fruit position
+    def set_food_position(self):
         self.food_position = [
-            random.randrange(1, (self.WINDOW_SIZE["x"] // self.BLOCK_SIZE)) * self.BLOCK_SIZE,
-            random.randrange(1, (self.WINDOW_SIZE["y"] // self.BLOCK_SIZE)) * self.BLOCK_SIZE
+            random.randrange(1, (self.WINDOW_SIZE["x"] // 40)) * 40,
+            random.randrange(1, (self.WINDOW_SIZE["y"] // 40)) * 40
         ]
+        # Set the boolean true
+        self.set_food_spawn(True)
+
+    def get_food_position(self):
+        # Set the food at a random X-Y coordinates
+        return self.food_position
 
     # Get the current score
     def get_score(self):
@@ -91,8 +105,7 @@ class Game:
     def get_food_spawn(self):
         return self._food_spawn
 
-    # Increment the score based
-    # on the color of food
+    # Set the score
     def set_score(self):
         if self.get_food_color() == "red":
             self._score += 10
@@ -109,27 +122,29 @@ class Game:
 
     # Increment the speed by 1
     def set_speed(self):
-        self._speed += 1
+        self._speed += 0.5
 
     # Set the boolean
     def set_food_spawn(self, food_spawn):
         self._food_spawn = food_spawn
 
-    # Get the food color
-    def set_food_color(self, random_color):
-        self._food_color = random_color
+    # set the food color
+    def set_food_color(self):
+        food_colors = list(self.COLOR.keys())
+        random_index = random.randint(3, len(food_colors) - 1)
+        self._food_color = f"{food_colors[random_index]}"
 
-    # Set the food color
+    # Get the food color
     def get_food_color(self):
         return self._food_color
 
     # Show the score
-    def show_score(self, color, font, size):
+    def show_score(self, color):
         # Make the font object
         score_font = pygame.font.SysFont(self.FONTS["score"]["name"], self.FONTS["score"]["size"], bold=True)
 
         # Make the display surface object
-        score_surface = score_font.render("Score : " + str(self.get_score()), True, color)
+        score_surface = score_font.render(" Score : " + str(self.get_score()), True, color)
 
         # Make a rectangular surface object
         score_rect = score_surface.get_rect()
