@@ -105,7 +105,6 @@ while True:
         end_pos = objGame.mamba_body[i + 1][0] + 20, objGame.mamba_body[i + 1][1] + 20
         objGame.draw_rounded_line(window, objGame.COLOR["grey"], start_pos, end_pos, 40)
 
-
     # Set a border around the food
     food_border = pygame.Rect(objGame.food_position[0], objGame.food_position[1], 40, 40)
 
