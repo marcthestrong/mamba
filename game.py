@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 import random
 import time
+import pygame.gfxdraw
 
 
 class Game:
@@ -139,6 +140,7 @@ class Game:
         return self._food_color
 
     # Show the score
+
     def show_score(self, color):
         # Make the font object
         score_font = pygame.font.SysFont(self.FONTS["score"]["name"], self.FONTS["score"]["size"], bold=True)
@@ -175,3 +177,11 @@ class Game:
         # Exit the program
         pygame.quit()
         sys.exit()
+
+    @staticmethod
+    def draw_rounded_line(surface, color, start_pos, end_pos, width):
+        pygame.draw.line(surface, color, start_pos, end_pos, width)
+        pygame.gfxdraw.aacircle(surface, int(start_pos[0]), int(start_pos[1]), int(width // 2), color)
+        pygame.gfxdraw.filled_circle(surface, int(start_pos[0]), int(start_pos[1]), int(width // 2), color)
+        pygame.gfxdraw.aacircle(surface, int(end_pos[0]), int(end_pos[1]), int(width // 2), color)
+        pygame.gfxdraw.filled_circle(surface, int(end_pos[0]), int(end_pos[1]), int(width // 2), color)

@@ -1,5 +1,6 @@
 # Author: Marcus Armstrong
 # Based on code from: https://www.geeksforgeeks.org/snake-game-in-python-using-pygame-module/
+# Assisted with OpenAI
 # Driver file
 
 from game import *
@@ -24,7 +25,6 @@ direction = objGame.direction
 
 # Main
 while True:
-
     # Draw the background
     window.blit(objGame.BACKGROUND_IMG, (0, 0))
 
@@ -94,9 +94,17 @@ while True:
         objGame.set_food_color()
         objGame.set_food_position()
 
-    # Set a border around the snake
+    '''# Set a border around the snake
     for segment in objGame.mamba_body:
-        pygame.draw.rect(window, objGame.COLOR["grey"], pygame.Rect(segment[0], segment[1], 40, 40))
+        pygame.draw.circle(window, objGame.COLOR["grey"], (segment[0] + 20, segment[1] + 20), 20)
+
+        #pygame.draw.rect(window, objGame.COLOR["grey"], pygame.Rect(segment[0], segment[1], 40, 40))'''
+
+    for i in range(len(objGame.mamba_body) - 1):
+        start_pos = objGame.mamba_body[i][0] + 20, objGame.mamba_body[i][1] + 20
+        end_pos = objGame.mamba_body[i + 1][0] + 20, objGame.mamba_body[i + 1][1] + 20
+        objGame.draw_rounded_line(window, objGame.COLOR["grey"], start_pos, end_pos, 40)
+
 
     # Set a border around the food
     food_border = pygame.Rect(objGame.food_position[0], objGame.food_position[1], 40, 40)
