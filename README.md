@@ -1,6 +1,6 @@
 # Mamba: A Snake Game
 
-![Mamba Snake Game](mamba_screenshot.png)
+![Mamba Snake Game](https://github.com/marcthestrong/mamba/blob/master/assets/graphics/screenshot.png)
 
 Mamba is a fun and challenging snake game developed using Python and the Pygame library. Guide the snake to eat food and grow larger while avoiding the wall and the mamba's own body. 
 
